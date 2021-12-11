@@ -1,0 +1,9 @@
+physical_sky {
+    name "sky_shader"
+}
+
+skydome_light {
+    name "sky_light"
+    shader "sky_shader"
+}
+

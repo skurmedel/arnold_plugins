@@ -1,0 +1,37 @@
+include "examples/sky.ass"
+
+options {
+    outputs 1 1 STRING
+        "RGBA RGBA filter1 output1"
+    AA_samples 3
+    x_res 512
+    y_res 512
+}
+
+gaussian_filter {
+    name "filter1"
+}
+
+driver_png {
+    name "output1"
+    filename "expr_implicit.png"
+}
+
+persp_camera {
+    name "main_cam"
+
+    position    2 2 2
+    look_at     0 0 0
+}
+
+standard_surface {
+    name "surface_shader"
+}
+
+so_expr_implicit {
+    name "implicit"
+    shader "surface_shader"
+    min -1.25 -1.25 -1.25
+    max 1.25 1.25 1.25
+}
+
