@@ -33,6 +33,5 @@ so_expr_implicit {
     shader "surface_shader"
     min -1.25 -1.25 -1.25
     max 1.25 1.25 1.25
-    expr "x^2-y^2+z^20"
 }
 

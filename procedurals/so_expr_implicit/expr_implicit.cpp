@@ -16,9 +16,13 @@ struct ExprImplicitNodeData {
     AtVector domain_max;
 };
 
-auto tryCompile(AtString const &expr, double &x, double &y, double &z)
-    -> te_expr * {
-    te_variable vars[] = {{"x", &x}, {"y", &y}, {"z", &z}};
+struct VariableBlock {
+    double x, y, z;
+};
+
+auto tryCompile(AtString const &expr, VariableBlock &varBlock) -> te_expr * {
+    te_variable vars[] = {
+        {"x", &varBlock.x}, {"y", &varBlock.y}, {"z", &varBlock.z}};
     int error = 0;
     te_expr *exprObj = te_compile(expr.c_str(), vars, 3, &error);
 
@@ -48,8 +52,8 @@ volume_create {
     nodeData->domain_min = AiNodeGetVec(node, ParamNames::DomainMin);
     nodeData->domain_max = AiNodeGetVec(node, ParamNames::DomainMax);
 
-    double x, y, z;
-    te_free(tryCompile(nodeData->expr, x, y, z));
+    VariableBlock dummy;
+    te_free(tryCompile(nodeData->expr, dummy));
 
     data->bbox = AtBBox(nodeData->domain_min, nodeData->domain_max);
     data->auto_step_size = 0.01f;
@@ -83,8 +87,11 @@ volume_sample {
     if (channel != AtString("field"))
         return false;
 
-    double x = sg->P.x, y = sg->P.y, z = sg->P.z;
-    te_expr *exprObj = tryCompile(nodeData->expr, x, y, z);
+    // TODO: Ideally we would not compile on each sample:
+    //  This would need to store separate blocks for each thread (sg->tid gives
+    //  thread id).
+    VariableBlock variables = {sg->P.x, sg->P.y, sg->P.z};
+    te_expr *exprObj = tryCompile(nodeData->expr, variables);
 
     value->FLT() = te_eval(exprObj);
     *type = AI_TYPE_FLOAT;
