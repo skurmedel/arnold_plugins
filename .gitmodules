@@ -1,0 +1,3 @@
+[submodule "procedurals/so_expr_implicit/tinyexpr"]
+	path = procedurals/so_expr_implicit/tinyexpr
+	url = https://github.com/codeplea/tinyexpr

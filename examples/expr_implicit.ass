@@ -4,8 +4,8 @@ options {
     outputs 1 1 STRING
         "RGBA RGBA filter1 output1"
     AA_samples 3
-    x_res 512
-    y_res 512
+    xres 512
+    yres 512
 }
 
 gaussian_filter {
@@ -33,5 +33,6 @@ so_expr_implicit {
     shader "surface_shader"
     min -1.25 -1.25 -1.25
     max 1.25 1.25 1.25
+    expr "x^2-y^2+z^20"
 }
 
